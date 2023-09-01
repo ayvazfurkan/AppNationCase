@@ -32,7 +32,7 @@
                 </td>
             </tr>
             <tr v-if="!fetching">
-                <td>New User</td>
+                <td>New User<br><i>No token needed</i></td>
                 <td>
                     <input type="text" v-model="newUser.username" class="form-control" placeholder="Enter username">
                 </td>
@@ -171,7 +171,7 @@ export default {
                             this.$swal('Failed', data.error, 'error');
                         }
                     } catch (error) {
-                        console.error('Error deleting user:', error);
+                        this.$swal('Failed', 'Access Denied', 'error');
                     }
                 } else {
                     this.$swal("Cancelled", "User is safe", "success");

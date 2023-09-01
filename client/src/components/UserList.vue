@@ -163,7 +163,7 @@ export default {
                     try {
                         const response = await axios.delete(`/user/${user._id}`);
                         const data = await response.data;
-                        if (response.status === 200) {
+                        if (response.status === 204) {
                             const index = this.users.indexOf(user);
                             this.users.splice(index, 1);
                             this.$swal("Deleted!", user.username + " has been deleted!", "success");

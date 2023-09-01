@@ -13,3 +13,7 @@ Backend is running on https://app-nation.onrender.com
 This project uses mongodb on cloud.mongodb.com
 
 I created `client` folder for web app.  
+
+*********
+
+Here is a Postman document https://www.postman.com/blue-trinity-710537/workspace/public/collection/20196364-df11eab7-43fa-4a8f-ad90-4567073f6d6a?action=share&creator=20196364

@@ -61,6 +61,9 @@
 </template>
 
 <script>
+
+import axios from "../../axios.config";
+
 export default {
     data() {
         return {
@@ -82,12 +85,8 @@ export default {
         }
         try {
             this.fetching = true;
-            const response = await fetch('http://localhost:3000/users', {
-                headers: {
-                    Authorization: localStorage.getItem('token')
-                }
-            });
-            this.users = await response.json();
+            const response = await axios.get('/users');
+            this.users = await response.data;
         } catch (error) {
             console.error('Error fetching users:', error);
         } finally {
@@ -109,18 +108,11 @@ export default {
             .then(async (result) => {
                 if (result.value) {
                     try {
-                        const response = await fetch(`http://localhost:3000/user/${user._id}`, {
-                            method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                Authorization: localStorage.getItem('token')
-                            },
-                            body: JSON.stringify({
-                                username: result.value
-                            })
+                        const response = await axios.put(`/user/${user._id}`, {
+                            username: result.value
                         });
-                        const data = await response.json();
-                        if (response.ok) {
+                        const data = await response.data;
+                        if (response.status === 201) {
                             user.username = data.user.username;
                             this.$swal('Updated', data.message, 'success');
                         } else {
@@ -135,20 +127,13 @@ export default {
         },
         async createUser() {
             try {
-                const response = await fetch(`http://localhost:3000/auth/register`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: localStorage.getItem('token')
-                    },
-                    body: JSON.stringify({
+                const response = await axios.post(`/auth/register`, {
                         username: this.newUser.username,
                         password: this.newUser.password,
                         role: this.newUser.role,
-                    })
                 });
-                const data = await response.json();
-                if (response.ok) {
+                const data = await response.data;
+                if (response.status === 201) {
                     this.users.push(data.user);
                     this.newUser.username = '';
                     this.newUser.role = '';
@@ -176,14 +161,9 @@ export default {
             .then(async (willDelete) => {
                 if (willDelete.value) {
                     try {
-                        const response = await fetch(`http://localhost:3000/user/${user._id}`, {
-                            method: 'DELETE',
-                            headers: {
-                                Authorization: localStorage.getItem('token')
-                            }
-                        });
-                        const data = await response.json();
-                        if (response.ok) {
+                        const response = await axios.delete(`/user/${user._id}`);
+                        const data = await response.data;
+                        if (response.status === 204) {
                             const index = this.users.indexOf(user);
                             this.users.splice(index, 1);
                             this.$swal("Deleted!", user.username + " has been deleted!", "success");
@@ -202,6 +182,7 @@ export default {
             localStorage.removeItem('token');
             localStorage.removeItem('username');
             localStorage.removeItem('role');
+            localStorage.removeItem('userId');
             this.$swal('Logged Out','Logged out successfully', 'success');
             this.$router.push('/login');
         }

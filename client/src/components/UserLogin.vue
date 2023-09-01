@@ -17,7 +17,7 @@
                                 <input v-model="password" autocomplete="off" type="password" class="form-control" id="password" placeholder="Enter password">
                             </div>
                             <br>
-                            <button type="submit" class="btn btn-primary" :disabled="username.length<2 || password.length<6" v-if="!loggingIn">Login</button>
+                            <button type="submit" class="btn btn-primary" :disabled="username.length<2 || password.length<6" v-if="!loggingIn">{{loginText}}</button>
                             <button type="submit" class="btn btn-primary" disabled v-if="loggingIn">Logging in...</button>
                         </form>
                     </div>
@@ -28,42 +28,45 @@
 </template>
 
 <script>
+import axios from "../../axios.config";
+
 export default {
     data() {
         return {
             username: '',
             password: '',
-            loggingIn: false
+            loggingIn: false,
+            loginText: 'Login'
         };
     },
     methods: {
         async login() {
             this.loggingIn = true;
             try {
-                const response = await fetch('http://localhost:3000/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        username: this.username,
-                        password: this.password
-                    })
+                const response = await axios.post('/auth/login', {
+                    username: this.username,
+                    password: this.password
                 });
 
-                const data = await response.json();
+                const data = response.data;
 
                 if (data.token) {
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('username', data.user.username);
                     localStorage.setItem('role', data.user.role);
-                    this.$router.push('/users');
                     this.$swal('Success', 'Login successful', 'success');
+                    this.$router.push('/users');
                 } else {
                     alert('Login failed, error: ' + data.error);
+                    this.loginText = 'Try Again'
                 }
             } catch (error) {
-                console.error('Login error:', error);
+                this.$swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Invalid username or password',
+                });
+                this.loginText = 'Try Again'
             } finally {
                 this.loggingIn = false;
             }

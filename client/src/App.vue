@@ -10,7 +10,6 @@ export default {
     data() {
         return {
             isLoggedIn: !!localStorage.getItem('token'),
-
         };
     },
     // if to.path changes, check if user is logged in

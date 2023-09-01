@@ -2,6 +2,44 @@ const User = require('../models/UserModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+const getUsers = async (req, res) => {
+    try {
+        const users = await User.find();
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ error: 'An error occurred, error:' + error });
+    }
+};
+
+const deleteUser = async (req, res) => {
+    if(req.params.id === req.user.id) {
+        res.status(500).json({ error: 'You can not delete yourself' });
+    } else {
+        try {
+            await User.findByIdAndDelete(req.params.id);
+            res.json({ message: 'User deleted' });
+        } catch (error) {
+            res.status(500).json({ error: 'An error occurred, error:' + error });
+        }
+    }
+};
+
+const updateUser = async (req, res) => {
+    try {
+        const newUsername = req.body.username.trim();
+        if (newUsername && newUsername.length > 3) {
+            const user = await User.findById(req.params.id);
+            user.username = newUsername;
+            await user.save();
+            res.status(201).json({ message: 'Username updated', user: user });
+        } else {
+            res.status(400).json({ error: 'Username must be filled' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'An error occurred, error: ' + error.message });
+    }
+};
+
 const register = async (req, res) => {
     try {
         const { username, password, role } = req.body;
@@ -33,6 +71,9 @@ const login = async (req, res) => {
 }
 
 module.exports = {
+    getUsers,
+    deleteUser,
+    updateUser,
     register,
     login
 };

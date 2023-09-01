@@ -1,26 +1,38 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div>
+        <router-view />
+    </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
-</script>
+    name: 'App',
+    data() {
+        return {
+            isLoggedIn: !!localStorage.getItem('token'),
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+        };
+    },
+    // if to.path changes, check if user is logged in
+    watch: {
+        $route(to) {
+            this.isLoggedIn = !!localStorage.getItem('token');
+            if(to.path === '/login') {
+                if(this.isLoggedIn) {
+                    this.$router.push('/users');
+                }
+            } else if(to.path === '/users') {
+                if(!this.isLoggedIn) {
+                    this.$router.push('/login');
+                }
+            } else {
+                if(!this.isLoggedIn) {
+                    this.$router.push('/login');
+                } else {
+                    this.$router.push('/users');
+                }
+            }
+        }
+    }
+};
+</script>

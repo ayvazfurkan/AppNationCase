@@ -108,7 +108,7 @@ export default {
             .then(async (result) => {
                 if (result.value) {
                     try {
-                        const response = await axios.put(`http://localhost:3000/user/${user._id}`, {
+                        const response = await axios.put(`/user/${user._id}`, {
                             username: result.value
                         });
                         const data = await response.data;
@@ -127,7 +127,7 @@ export default {
         },
         async createUser() {
             try {
-                const response = await axios.post(`http://localhost:3000/auth/register`, {
+                const response = await axios.post(`/auth/register`, {
                         username: this.newUser.username,
                         password: this.newUser.password,
                         role: this.newUser.role,
@@ -161,7 +161,7 @@ export default {
             .then(async (willDelete) => {
                 if (willDelete.value) {
                     try {
-                        const response = await axios.delete(`http://localhost:3000/user/${user._id}`);
+                        const response = await axios.delete(`/user/${user._id}`);
                         const data = await response.data;
                         if (response.status === 200) {
                             const index = this.users.indexOf(user);
@@ -182,6 +182,7 @@ export default {
             localStorage.removeItem('token');
             localStorage.removeItem('username');
             localStorage.removeItem('role');
+            localStorage.removeItem('userId');
             this.$swal('Logged Out','Logged out successfully', 'success');
             this.$router.push('/login');
         }

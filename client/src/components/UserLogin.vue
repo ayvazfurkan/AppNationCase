@@ -17,7 +17,7 @@
                                 <input v-model="password" autocomplete="off" type="password" class="form-control" id="password" placeholder="Enter password">
                             </div>
                             <br>
-                            <button type="submit" class="btn btn-primary" :disabled="username.length<2 || password.length<6" v-if="!loggingIn">Login</button>
+                            <button type="submit" class="btn btn-primary" :disabled="username.length<2 || password.length<6" v-if="!loggingIn">{{loginText}}</button>
                             <button type="submit" class="btn btn-primary" disabled v-if="loggingIn">Logging in...</button>
                         </form>
                     </div>
@@ -35,7 +35,8 @@ export default {
         return {
             username: '',
             password: '',
-            loggingIn: false
+            loggingIn: false,
+            loginText: 'Login'
         };
     },
     methods: {
@@ -53,13 +54,20 @@ export default {
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('username', data.user.username);
                     localStorage.setItem('role', data.user.role);
+                    localStorage.setItem('userId', data.user._id);
                     this.$swal('Success', 'Login successful', 'success');
                     this.$router.push('/users');
                 } else {
                     alert('Login failed, error: ' + data.error);
+                    this.loginText = 'Try Again'
                 }
             } catch (error) {
-                console.error('Login error:', error);
+                this.$swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Invalid username or password',
+                });
+                this.loginText = 'Try Again'
             } finally {
                 this.loggingIn = false;
             }

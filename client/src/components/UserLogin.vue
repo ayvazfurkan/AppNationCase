@@ -55,7 +55,12 @@ export default {
                     localStorage.setItem('username', data.user.username);
                     localStorage.setItem('role', data.user.role);
                     axios.defaults.headers.common['Authorization'] = data.token;
-                    this.$swal('Success', 'Login successful', 'success');
+                    this.$swal({
+                        icon: 'success',
+                        title: 'Login successful',
+                        showConfirmButton: true,
+                        timer: 1000
+                    });
                     this.$router.push('/users');
                 } else {
                     alert('Login failed, error: ' + data.error);

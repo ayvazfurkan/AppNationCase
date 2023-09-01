@@ -103,7 +103,8 @@ export default {
                 confirmButtonText: "Update",
                 inputValidator: (value) => {
                     return !value && 'You need to write something!'
-                }
+                },
+                inputValue: user.username,
             })
             .then(async (result) => {
                 if (result.value) {
@@ -119,7 +120,7 @@ export default {
                             this.$swal('Failed', data.error, 'error');
                         }
                     } catch (error) {
-                        console.error('Error updating user:', error);
+                        this.$swal('Failed', error.response.data.error, 'error');
                     }
                 }
             });
@@ -142,7 +143,7 @@ export default {
                     this.$swal('Failed', data.error, 'error');
                 }
             } catch (error) {
-                console.error('Error deleting user:', error);
+                this.$swal('Failed', error.response.data.error, 'error');
             }
         },
         async deleteUser(user) {
@@ -171,7 +172,7 @@ export default {
                             this.$swal('Failed', data.error, 'error');
                         }
                     } catch (error) {
-                        this.$swal('Failed', 'Access Denied', 'error');
+                        this.$swal('Failed', error.response.data.error, 'error');
                     }
                 } else {
                     this.$swal("Cancelled", "User is safe", "success");
@@ -182,8 +183,12 @@ export default {
             localStorage.removeItem('token');
             localStorage.removeItem('username');
             localStorage.removeItem('role');
-            localStorage.removeItem('userId');
-            this.$swal('Logged Out','Logged out successfully', 'success');
+            this.$swal({
+                icon: 'success',
+                title: 'Logged Out Successfully',
+                showConfirmButton: true,
+                timer: 1000
+            });
             this.$router.push('/login');
         }
     }

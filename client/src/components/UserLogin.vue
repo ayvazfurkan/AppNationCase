@@ -28,6 +28,8 @@
 </template>
 
 <script>
+import axios from "../../axios.config";
+
 export default {
     data() {
         return {
@@ -40,25 +42,19 @@ export default {
         async login() {
             this.loggingIn = true;
             try {
-                const response = await fetch('http://localhost:3000/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        username: this.username,
-                        password: this.password
-                    })
+                const response = await axios.post('/auth/login', {
+                    username: this.username,
+                    password: this.password
                 });
 
-                const data = await response.json();
+                const data = response.data;
 
                 if (data.token) {
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('username', data.user.username);
                     localStorage.setItem('role', data.user.role);
-                    this.$router.push('/users');
                     this.$swal('Success', 'Login successful', 'success');
+                    this.$router.push('/users');
                 } else {
                     alert('Login failed, error: ' + data.error);
                 }
